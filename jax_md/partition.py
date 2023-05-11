@@ -890,7 +890,7 @@ def neighbor_list(displacement_or_metric: DisplacementOrMetricFn,
           _box = kwargs.get('box', box)
           cell_size = cutoff
           if fractional_coordinates:
-            err = err.update(PEC.MALFORMED_BOX, is_box_valid(_box))
+            err = err.update(PEC.MALFORMED_BOX, is_box_valid(_box) == False)
             cell_size = _fractional_cell_size(_box, cutoff)
             _box = 1.0
           if jnp.all(cell_size < _box / 3.):
@@ -966,7 +966,7 @@ def neighbor_list(displacement_or_metric: DisplacementOrMetricFn,
                                  _fractional_cell_size(kwargs['box'], cutoff))
       err = nbrs.error.update(PEC.CELL_SIZE_TOO_SMALL,
                               new_cell_size > cur_cell_size)
-      err = err.update(PEC.MALFORMED_BOX, is_box_valid(kwargs['box']))
+      err = err.update(PEC.MALFORMED_BOX, is_box_valid(kwargs['box']) == False)
       nbrs = dataclasses.replace(nbrs, error=err)
 
     d = partial(metric_sq, **kwargs)

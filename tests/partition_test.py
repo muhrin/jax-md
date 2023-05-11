@@ -540,6 +540,8 @@ class NeighborListTest(test_util.JAXMDTestCase):
 
       R = random.uniform(key, (N, dim))
       nbrs = neighbor_fn.allocate(R)
+      self.assertFalse(jnp.any(nbrs.error.code), str(nbrs.error))
+
       E_target = E_exact(R)
       self.assertTrue(jnp.any(jnp.abs(E_target) > 0.25))
       self.assertAllClose(E_target, E(R, neighbor=nbrs))
@@ -595,7 +597,11 @@ class NeighborListTest(test_util.JAXMDTestCase):
 
       R = random.uniform(key, (N, dim))
       nbrs = neighbor_fn.allocate(R)
+      self.assertFalse(jnp.any(nbrs.error.code), str(nbrs.error))
+
       nbrs = nbrs.update(R, box=cl * factor)
+      self.assertFalse(jnp.any(nbrs.error.code), str(nbrs.error))
+
       E_target = E_exact(R, box=cl * factor)
       if factor > 1:
         self.assertTrue(jnp.any(jnp.abs(E_target) > 0.25))
